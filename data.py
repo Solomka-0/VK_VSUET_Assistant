@@ -2,7 +2,7 @@ from inspect import getsourcefile
 from os.path import abspath
 import random
 
-token = "<ваш токен>" # Место для токена сообщества
+token = "7db3a1e3820df267ef560d7aeb6854b6713af45dc4e81baa34426711b5bdf9b2564b747861715bd27402f" # Место для токена сообщества
 path = abspath(getsourcefile(lambda:0)).replace('\\', '/').replace('data.py','') # Определение пути к папке
 print('\n\033[32m\033[40mТокен сообщества: \033[33m\033[40m' + str(token[0:8]) + '-...-' + str(token[len(token)-8:len(token)]))
 print('\033[32m\033[40mТекущий путь к папке: \033[33m\033[40m' + path + '\033[37m\033[40m')
@@ -17,7 +17,7 @@ class Jpg: # Картинка в каталоге. Примечание: при 
         self.name = name
         self.path = path
 
-class Pdf: # Документа в каталоге. Примечание: при создании объекта, путь обязательно должен содержать название файла вместе с его расширением
+class Pdf: # Документы в каталоге. Примечание: при создании объекта, путь обязательно должен содержать название файла вместе с его расширением
     def __init__(self, name, text, path, file_name):
         self.name = name
         self.text = text

@@ -7,6 +7,7 @@ import time
 #Импорт дополнительных модулей
 import rewriter
 import controller
+import answers
 import data
 import json
 
@@ -94,7 +95,7 @@ while True:
                         if users.find_value('user_id', event.user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
                             out = controller.main(event.user_id, input[0]) # Помогает пользователю, выводя для него каталог или определенные файлы
                         else:
-                            out = conroller.answer(event.user_id, input[0], input[1])
+                            out = controller.answer(event.user_id, input[0], input[1])
 
                         if isinstance(out, list):
                             for element in out: # Отправляет все сообщения или файлы (если их несколько) пользователю

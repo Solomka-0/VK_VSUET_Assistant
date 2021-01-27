@@ -64,8 +64,8 @@ def in_stream(user_id): # Проверяет есть ли id пользоват
             return True
     return False
 
-def answer(user_id, words = None, keywords):
-    pass
+def answer(user_id, words = [], keywords = []):
+    return [str(words), str(keywords)]
 
 def main(user_id, words = None): # Получает id клиента и текст сообщения в виде массива со словами
     global stream
