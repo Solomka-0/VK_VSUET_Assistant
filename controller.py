@@ -64,7 +64,10 @@ def in_stream(user_id): # Проверяет есть ли id пользоват
             return True
     return False
 
-def main(user_id, words = None): #Получает id клиента и текст сообщения в виде массива со словами
+def answer(user_id, words = None, keywords):
+    pass
+
+def main(user_id, words = None): # Получает id клиента и текст сообщения в виде массива со словами
     global stream
     now = datetime.datetime.now() # Определение текущего времени
     # Вывод в консоль
