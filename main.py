@@ -65,7 +65,7 @@ def write(user_id, message = None, file = None): # Отправляет сооб
         elif isinstance(file, data.Folder) and file.text != None:
             vk.method('messages.send', {'user_id': user_id, 'message': file.text, 'random_id': id_generator()})
 
-out = [] # Переменная для вывода
+output = [] # Переменная для вывода
 users = Storage("users") # Переменная для долгосрочного хранения данных
 # Основная программа
 vk = vk_api.VkApi(token=data.token) #
@@ -86,25 +86,22 @@ while True:
                     except:
                         print('Ошибка при выборе данных о пользователе')
 
-
                     request = event.text # Принимает сообщение от пользователя в виде текста
                     try:
-                        input = rewriter.rewriter(request) # Разделяет строку на слова и находит ключевые слова
-                                                           # Тип: массив; Первый элемент - массив со словами, Второй - массив с ключами
-
+                        input = rewriter.rewriter(request) # Разделяет строку на слова
                         if users.find_value('user_id', event.user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
-                            out = controller.main(event.user_id, input[0]) # Помогает пользователю, выводя для него каталог или определенные файлы
+                            output = controller.main(event.user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
                         else:
-                            out = controller.answer(event.user_id, input[0], input[1])
+                            output = answers.main(event.user_id, input)
 
-                        if isinstance(out, list):
-                            for element in out: # Отправляет все сообщения или файлы (если их несколько) пользователю
+                        if isinstance(output, list):
+                            for element in output: # Отправляет все сообщения или файлы (если их несколько) пользователю
                                 if isinstance(element, str):
                                     write(event.user_id, element)
                                 else:
                                     write(event.user_id, file = element)
                         else:
-                            write(event.user_id, out)
+                            write(event.user_id, output)
                     except:
                         pass
     except:
