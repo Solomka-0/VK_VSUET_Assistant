@@ -1,0 +1,31 @@
+{
+  "main":
+  {
+     "one_time":false,
+     "buttons":[
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"/assistant"
+             },
+             "color":"negative"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"/keyboard"
+             },
+             "color":"positive"
+          }
+        ]
+     ]
+  },
+  "remote":
+  {
+    "one_time":true,
+    "buttons":[]
+  }
+}
