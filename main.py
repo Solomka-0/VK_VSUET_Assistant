@@ -92,7 +92,7 @@ def find_keyboard(name): # Ищет и возвращает клавиатуру
         print('Ошибка при чтении файла keyboards.json (см. find_keyboard)')
         return json.dumps({"buttons":[],"one_time":True}, separators=(',', ':'))
 
-def update_keyboard(user_id, keyboard, message = 'Updated'): # Обновляет клавиатуру
+def update_keyboard(user_id, keyboard, message = 'Клавиатура обновлена'): # Обновляет клавиатуру
     try:
         vk.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': id_generator(), 'keyboard': find_keyboard(keyboard)})
     except:
@@ -174,6 +174,22 @@ def switch_mode(user_id, mode = 'assistant_mode'): # Переключает ре
         elif mode == 'keyboard_mode':
             write(user_id, 'Клавиатура отключена!')
 
+def command_block(user_id, words):
+    if '/assistant' in words or ('режим' in words and 'работы' in words and 'помошника' in words):
+        switch_mode(user_id)
+        return True
+    elif '/keyboard' in words or ('отображение' in words and 'каталогов' in words):
+        switch_mode(user_id, 'keyboard_mode')
+        return True
+
+    if '/hide' in words or ('меню' in words and 'свернуть' in words):
+        update_keyboard(user_id, "hide")
+        return True
+    elif '/menu' in words or ('меню' in words):
+        update_keyboard(user_id, "main")
+        return True
+    return False
+
 output = [] # Переменная для вывода
 users = Storage("users") # Переменная для долгосрочного хранения данных
 # Основная программа
@@ -197,23 +213,16 @@ while True:
                         'keyboard_mode':True})
                         write(user_id, random_greeting(users.find_value('user_id', user_id)['first_name'])
                         + greeting_massage)
+                        command_block(user_id, '/hide')
                         break
 
                     request = event.text # Принимает сообщение от пользователя в виде текста
                     try:
                         input = rewriter.rewriter(request) # Разделяет строку на слова
+                        if command_block(user_id, input):
+                            break
                         # Вывод в консоль
                         print('\n[', now.strftime("%d-%m %H:%M:%S"), ']\n\033[4m\033[32muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[32mrequest:\033[0m\033[33m', input, '\033[0m\033[37m')
-                        if '/assistant' in input:
-                            switch_mode(user_id)
-                            break
-                        elif '/keyboard' in input:
-                            switch_mode(user_id, 'keyboard_mode')
-
-                        if '/menu' in input:
-                            update_keyboard(user_id, "main")
-                        elif '/hide' in input:
-                            update_keyboard(user_id, "remote")
                         if users.find_value('user_id', user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
                             output = controller.main(user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
                         elif not (user_id in data.admins):

@@ -7,25 +7,42 @@
           {
              "action":{
                 "type":"text",
-                "label":"/assistant"
+                "label":"Изменить режим работы помошника"
              },
-             "color":"negative"
+             "color":"positive"
           }
         ],
         [
           {
              "action":{
                 "type":"text",
-                "label":"/keyboard"
+                "label":"Переключить отображение каталогов"
              },
              "color":"positive"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Свернуть меню"
+             },
+             "color":"secondary"
           }
         ]
      ]
   },
-  "remote":
+  "hide":
   {
     "one_time":true,
-    "buttons":[]
+    "buttons":[[
+      {
+         "action":{
+            "type":"text",
+            "label":"Меню"
+         },
+         "color":"secondary"
+      }
+    ]]
   }
 }
