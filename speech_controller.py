@@ -3,7 +3,7 @@ import random
 import time
 
 import data
-
+from data import answers
 greeting_massage = '''\nТебя приветствует онлайн-помощник ВГУИТ. Я отвечу на вопросы абитуриента и помогу с ответом на другие. Если ты интерисуешься поступлением в наш университет, то есть специальный каталог, который тебе поможет. Для работы с ним поменяй режим работы командой "/assistant".
 В любом случае, тебе может пригодиться меню, для его вызова есть команда "/menu", ну и "/hide" для того чтобы его спрятать. Думаю, ты разберешься!'''
 requests_time = {}
@@ -67,7 +67,18 @@ def form_request(user_id, text, users, admins):
         output[id] = f'{users.find_value("user_id", user_id)["first_name"]} задал(-а) вопрос: "' + text + '"'
     return output
 
-def notify_admins(user_id, text, users, admins):
+def find_answer(words):
+    keys = dict_to_list(answers).copy()
+    answer = []
+    for question in keys:
+        if len(question - set(words)) == 0:
+            answer.append(answers[question])
+    if len(answer) != 0:
+        return answer
+    else:
+        return None
+
+def notify_admins(user_id, text, users, admins): # Функция уведомления администраторов о поступившем вопросе
     global requests_time
 
     day_time = int(time.time() / 100)

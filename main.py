@@ -9,6 +9,7 @@ import controller
 from speech_controller import notify_admins
 from speech_controller import random_greeting
 from speech_controller import greeting_massage
+from speech_controller import find_answer
 import data
 import json
 
@@ -146,6 +147,10 @@ def write(user_id, output): # "Распределяет" вывод
             for element in output: # Отправляет все сообщения или файлы (если их несколько) пользователю
                 if isinstance(element, str):
                     proc_str(user_id, element)
+                elif isinstance(element, list):
+                    write(user_id, element)
+                elif isinstance(output, dict):
+                    write(user_id, element)
                 else:
                     send(user_id, file = element)
         except:
@@ -226,9 +231,14 @@ while True:
                         if users.find_value('user_id', user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
                             output = controller.main(user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
                         elif not (user_id in data.admins):
-                            output = notify_admins(user_id, event.text, users, find_admins())
+                            anwer = None
+                            answer = find_answer(input)
+                            if answer != None:
+                                output = [answer, notify_admins(user_id, event.text, users, find_admins())]
+                            else:
+                                output = notify_admins(user_id, event.text, users, find_admins())
                         else:
-                            output = 'Администратору не могут приходить вопросы от администратора!'
+                            output = 'Вы администратор, вам недоступен этот режим :c'
 
                         write(user_id, output)
                     except:
