@@ -230,7 +230,7 @@ while True:
                         print('\n[', now.strftime("%d-%m %H:%M:%S"), ']\n\033[4m\033[32muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[32mrequest:\033[0m\033[33m', input, '\033[0m\033[37m')
                         if users.find_value('user_id', user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
                             output = controller.main(user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
-                        elif (user_id in data.admins):
+                        elif not(user_id in data.admins):
                             answer = find_answer(input)
                             if answer != None:
                                 output = [answer, notify_admins(user_id, event.text, users, find_admins())]
