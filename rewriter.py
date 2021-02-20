@@ -7,13 +7,36 @@ numeral = {0: '0⃣', 1: '1⃣' , 2: '2⃣', 3: '3⃣' , 4: '4⃣' , 5: '5⃣' ,
 
 def num_in_sm(number):
     global numeral
-
     out = ''
     while (number//10 != 0):
         out = numeral[number%10] + out
         number = number//10
     out = numeral[number%10] + out
     return out
+
+def replace_smiles(string):
+    string = string.replace(' 0⃣', '0')
+    string = string.replace(' 1⃣', '1')
+    string = string.replace(' 2⃣', '2')
+    string = string.replace(' 3⃣', '3')
+    string = string.replace(' 4⃣', '4')
+    string = string.replace(' 5⃣', '5')
+    string = string.replace(' 6⃣', '6')
+    string = string.replace(' 7⃣', '7')
+    string = string.replace(' 8⃣', '8')
+    string = string.replace(' 9⃣', '9')
+    string = string.replace('0⃣', '0')
+    string = string.replace('1⃣', '1')
+    string = string.replace('2⃣', '2')
+    string = string.replace('3⃣', '3')
+    string = string.replace('4⃣', '4')
+    string = string.replace('5⃣', '5')
+    string = string.replace('6⃣', '6')
+    string = string.replace('7⃣', '7')
+    string = string.replace('8⃣', '8')
+    string = string.replace('9⃣', '9')
+    return string
+
 
 def del_spaces(array_of_words):
     i = 0

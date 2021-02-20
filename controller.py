@@ -34,10 +34,10 @@ def add_to_stream(user_id): # Добавляет пользователя в с�
     global stream
     stream[user_id] = archive.copy()
 
-def delete_stream(user_id): # Пересоздает ветку(каталог) пользователя в списке
+def delete_stream(user_id):
     stream.pop(user_id)
 
-def re_creation_stream(user_id): # Пересоздает ветку(каталог) пользователя в списке
+def re_creation_stream(user_id):
     stream[user_id] = archive.copy()
 
 def update_stream(user_id, number): # Осуществляет переход пользователя по каталогу и возвращает значение, зависящее от типа файла

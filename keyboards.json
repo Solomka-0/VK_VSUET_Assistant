@@ -1,5 +1,20 @@
 {
-  "main":
+  "start":
+  {
+    "one_time":false,
+    "buttons":[
+        [
+          {
+            "action":{
+              "type":"text",
+              "label":"Начало"
+            },
+            "color":"secondary"
+          }
+        ]
+    ]
+  },
+  "switch_mode":
   {
      "one_time":false,
      "buttons":[
@@ -7,7 +22,22 @@
           {
              "action":{
                 "type":"text",
-                "label":"Изменить режим работы помошника"
+                "label":"Изменить режим работы помощника"
+             },
+             "color":"positive"
+          }
+        ]
+     ]
+  },
+  "entrant":
+  {
+     "one_time":false,
+     "buttons":[
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Изменить режим работы помощника"
              },
              "color":"positive"
           }
@@ -20,12 +50,36 @@
              },
              "color":"positive"
           }
+        ]
+     ]
+  },
+  "modes":
+  {
+     "one_time":true,
+     "buttons":[
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Общие вопросы"
+             },
+             "color":"positive"
+          }
         ],
         [
           {
              "action":{
                 "type":"text",
-                "label":"Свернуть меню"
+                "label":"Абитуриенту"
+             },
+             "color":"positive"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"По вопросам маркетинга"
              },
              "color":"secondary"
           }
@@ -45,4 +99,5 @@
       }
     ]]
   }
+
 }

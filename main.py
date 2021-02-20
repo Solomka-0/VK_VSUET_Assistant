@@ -8,7 +8,7 @@ import rewriter
 import controller
 from speech_controller import notify_admins
 from speech_controller import random_greeting
-from speech_controller import greeting_massage
+from speech_controller import greeting_message, introductory_student, introductory_ad, introductory_entrant
 from speech_controller import find_answer
 import data
 import json
@@ -101,10 +101,10 @@ def update_keyboard(user_id, keyboard, message = 'Клавиатура обно�
 
 def send(user_id, message = None, file = None): # Отправляет сообщение или файл пользователю
     attachments = []
+    print('\033[0m\033[37m ↑ Answer ↑\n\033[4m\033[36muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[36mmessage:\033[0m\033[33m', message, '\n\033[4m\033[36mtype_of_file:\033[0m\033[33m', type(file), '\033[0m\033[37m')
     if message != None:
         vk.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': id_generator()})
     elif file != None:
-        print(type(file))
         if isinstance(file, data.Media): # Кидает картинку на сервер, а затем пересылает ее пользователю вместе с текстом сообщения
             file_name = data.path + file.path
             upload_image = upload.photo_messages(photos=file_name)[0]
@@ -133,8 +133,7 @@ def proc_str(user_id, string): # Смотрит на то как вывести 
             print('Не удалось создать клавиатуру!')
 
 def write(user_id, output): # "Распределяет" вывод
-    print('Ответ:', type(output))
-    if isinstance(output, str): # Выполняет действия, предназначенные для строке (list)
+    if isinstance(output, str): # Выполняет действия, предназначенные для строки
         if users.find_value('user_id', user_id)['keyboard_mode'] and output.find('0') != -1:
             try:
                 generate_keyboard(user_id, output) # Генерирует сообщение-клавиатуру
@@ -160,85 +159,181 @@ def write(user_id, output): # "Распределяет" вывод
         ids = controller.dict_to_list(output).copy()
         for element in ids:
             write(element, output[element])
+    elif isinstance(output, None):
+        print("*Молчит*")
     else:
         send(user_id, output)
         print('Ошибка при выводе класса (функция write)')
 
-def switch_mode(user_id, mode = 'assistant_mode'): # Переключает режим работы
-    users.find_value('user_id', user_id)[mode] = not users.find_value('user_id', user_id)[mode]
+def switch_mode(user_id, mode = None): # Переключает режим работы
+    users.find_value('user_id', user_id)['mode'] = mode
+    if mode == 'entrant':
+        write(user_id, ['Включен режим для абитуриента!', controller.main(user_id)])
+    elif mode == 'student':
+        write(user_id, 'Ну, где там твой вопрос? 🧐')
+    elif mode == 'ad':
+        write(user_id, 'Мы ждем :)')
     users.saving()
-    if users.find_value('user_id', user_id)[mode] == True:
-        if mode == 'assistant_mode':
-            write(user_id, ['Включен режим для абитуриента!', controller.main(user_id)])
-        elif mode == 'keyboard_mode':
-            write(user_id, 'Клавиатура подключена!')
-    else:
-        if mode == 'assistant_mode':
-            controller.delete_stream(user_id)
-            write(user_id, 'Режим для абитуриента выключен!')
-        elif mode == 'keyboard_mode':
-            write(user_id, 'Клавиатура отключена!')
 
 def command_block(user_id, words):
-    if '/assistant' in words or ('режим' in words and 'работы' in words and 'помошника' in words):
-        switch_mode(user_id)
+    if '/entrant_mode' in words or 'абитуриенту' in words:
+        update_keyboard(user_id, 'entrant', introductory_entrant)
+        switch_mode(user_id, mode = 'entrant')
+        return True
+    elif '/student_mode' in words or ('общие' in words and 'вопросы' in words):
+        update_keyboard(user_id, 'switch_mode', introductory_student)
+        switch_mode(user_id, mode = 'student')
+        return True
+    elif '/ad_mode' in words or ('по' in words and 'маркетинга' in words):
+        update_keyboard(user_id, 'switch_mode', introductory_ad)
+        switch_mode(user_id, mode = 'ad')
         return True
     elif '/keyboard' in words or ('отображение' in words and 'каталогов' in words):
-        switch_mode(user_id, 'keyboard_mode')
+        users.find_value('user_id', user_id)['keyboard_mode'] = not users.find_value('user_id', user_id)['keyboard_mode']
+        users.saving()
+        write(user_id, 'Режим работы с клавиатурой изменен')
         return True
 
-    if '/hide' in words or ('меню' in words and 'свернуть' in words):
-        update_keyboard(user_id, "hide")
-        return True
-    elif '/menu' in words or ('меню' in words):
-        update_keyboard(user_id, "main")
+    if '/modes' in words or ('изменить' in words and 'режим' in words and 'работы' in words):
+        update_keyboard(user_id, 'modes')
         return True
     return False
 
 output = [] # Переменная для вывода
 users = Storage("users") # Переменная для долгосрочного хранения данных
+admins = Storage("admins")
+
+def distribution_controller(mode, input, user_id, request): # Параметры: mode - режим работы с пользователем,
+                                                            # input - слова пользовательского запроса,
+                                                            # user_id - id пользователя, request - текст сообщения от пользователя
+    global users
+    if mode == 'entrant': # Смотрит в каком режиме нужно ответить пользователю
+        return controller.main(user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
+    elif mode == 'student' or mode == None:
+        answer = find_answer(input) # Присваивает ответ на указаный вопрос, если он есть в каталоге
+        if answer != None:
+            return [answer, notify_admins(user_id, request, users, 'student')]
+        else:
+            return notify_admins(user_id, request, users, 'student')
+    elif mode == 'ad':
+        return notify_admins(user_id, request, users, 'ad')
+
+def display_admins(): # Выводит список администраторов с нужными параметрами
+    print('\nАдминистрация:\n')
+    for admin in admins.list:
+        print(f'{admin["first_name"]} | id: "{admin["user_id"]}", modes: {admin["modes"]}\n')
+
+def announce_admins(): # Обновляет список администрации
+    if admins.list != find_admins():
+        for admin_id in find_admins():
+            if admins.find_value('user_id', admin_id) == False:
+                admins.add({
+                'user_id':admin_id,
+                'first_name':vk.method('users.get',{'user_id':admin_id})[0]['first_name'],
+                'last_name':vk.method('users.get',{'user_id':admin_id})[0]['last_name'],
+                'modes':[]})
+    for admin in admins.list: # Заносит администраторов во вспомогательные списки
+        if 'ad' in admin["modes"]:
+            data.marketing_adm.append(admin['user_id'])
+        if 'student' in admin["modes"]:
+            data.student_adm.append(admin['user_id'])
+
+def change_settings_adm(): # Помогает в работе со списком администраторов
+    if input('Изменить настройки администрации? (y/n): ') == 'y':
+        print('Для выхода наберите "exit"')
+        display_admins()
+        print('Для справки:\nswitch_mode <id> <mode> - переключить режим администратору,\nadd_mode <id> <mode> - добавить режим,\nclear <id> - очистить режимы\n')
+        print('Режимы работы: "student", "ad"\n')
+        while True: # Слушает команды от пользователя
+            command = input('Команда: ')
+            if command == 'exit':
+                break
+            if 'switch_mode ' in command: # Меняет режим (режимы) на заданный
+                command = command.replace('switch_mode ', '')
+                try:
+                    id = int(command[0:command.find(' ')])
+                    mode = command[command.find(' ')+1:len(command)]
+                except:
+                    print('Ошибка распознания команды')
+                    break
+                if mode == 'student':
+                    admins.find_value('user_id', id)['modes'].clear()
+                    admins.find_value('user_id', id)['modes'].append('student')
+                elif mode == 'ad':
+                    admins.find_value('user_id', id)['modes'].clear()
+                    admins.find_value('user_id', id)['modes'].append('ad')
+
+            elif 'add_mode ' in command: # Добавляет режим в список
+                command = command.replace('add_mode ', '')
+                try:
+                    id = int(command[0:command.find(' ')])
+                    mode = command[command.find(' ')+1:len(command)]
+                except:
+                    print('Ошибка распознания команды\n')
+                    break
+                if mode == 'student':
+                    new_set = set(admins.find_value('user_id', id)['modes'])
+                    new_set.add('student')
+                    admins.find_value('user_id', id)['modes'] = list(new_set).copy()
+                elif mode == 'ad':
+                    new_set = set(admins.find_value('user_id', id)['modes'])
+                    new_set.add('ad')
+                    admins.find_value('user_id', id)['modes'] = list(new_set).copy()
+
+            elif 'clear ' in command: # Очищает список режимов
+                command = command.replace('clear ', '')
+                admins.find_value('user_id', id)['modes'].clear()
+            else:
+                print(f'Неизвестная команда: {command[0:len(command)]}')
+                continue
+            admins.saving()
+            print('Изменения были сохранены!')
+    print('\n-- Помощник запущен! --')
+
 # Основная программа
 vk = vk_api.VkApi(token=data.token) #
 longpoll = VkLongPoll(vk)           #     Авторизация в сообществе
 upload = VkUpload(vk)               #
+announce_admins()
+change_settings_adm()
 while True:
     try:
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.to_me:
                     now = datetime.datetime.now() # Определение текущего времени
-                    data.admins = find_admins()
                     user_id = event.user_id
-                    if users.find_value('user_id', user_id) == False: # Получает инфомацию о пользователе
-                        users.add({
-                        'user_id':user_id,
-                        'first_name':vk.method('users.get',{'user_id':user_id})[0]['first_name'],
-                        'last_name':vk.method('users.get',{'user_id':user_id})[0]['last_name'],
-                        'assistant_mode':False,
-                        'keyboard_mode':True})
-                        write(user_id, random_greeting(users.find_value('user_id', user_id)['first_name'])
-                        + greeting_massage)
-                        command_block(user_id, '/hide')
-                        break
-
-                    request = event.text # Принимает сообщение от пользователя в виде текста
+                    request = rewriter.replace_smiles(event.text) # Принимает сообщение от пользователя в виде текста
                     try:
                         input = rewriter.rewriter(request) # Разделяет строку на слова
-                        if command_block(user_id, input):
-                            break
-                        # Вывод в консоль
                         print('\n[', now.strftime("%d-%m %H:%M:%S"), ']\n\033[4m\033[32muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[32mrequest:\033[0m\033[33m', input, '\033[0m\033[37m')
-                        if users.find_value('user_id', user_id)['assistant_mode'] == True: # Смотрит в каком режиме нужно ответить пользователю
-                            output = controller.main(user_id, input) # Помогает пользователю, выводя для него каталог или определенные файлы
-                        elif not(user_id in data.admins):
-                            answer = find_answer(input)
-                            if answer != None:
-                                output = [answer, notify_admins(user_id, event.text, users, find_admins())]
-                            else:
-                                output = notify_admins(user_id, event.text, users, find_admins())
-                        else:
-                            output = 'Вы администратор, вам недоступен этот режим :c'
-
+                        if ('начать' in input or 'начало' in input) and users.find_value('user_id', user_id) == False: # Получает инфомацию о пользователе
+                            users.add({
+                            'user_id':user_id,
+                            'first_name':vk.method('users.get',{'user_id':user_id})[0]['first_name'],
+                            'last_name':vk.method('users.get',{'user_id':user_id})[0]['last_name'],
+                            'mode':None,
+                            'keyboard_mode':True})
+                            write(user_id, random_greeting(users.find_value('user_id', user_id)['first_name'])
+                            + greeting_message)
+                            update_keyboard(user_id, 'modes', 'Выбирай (клавиатура)')
+                            break
+                        elif users.find_value('user_id', user_id) == False:
+                            users.add({
+                            'user_id':user_id,
+                            'first_name':vk.method('users.get',{'user_id':user_id})[0]['first_name'],
+                            'last_name':vk.method('users.get',{'user_id':user_id})[0]['last_name'],
+                            'mode':None,
+                            'keyboard_mode':True})
+                            command_block(user_id, input)
+                        elif ('начать' in input or 'начало' in input) and users.find_value('user_id', user_id):
+                            write(user_id, random_greeting(users.find_value('user_id', user_id)['first_name'])
+                            + greeting_message)
+                            update_keyboard(user_id, 'modes', 'Выбирай (клавиатура)')
+                            break
+                        elif command_block(user_id, input):
+                            break
+                        output = distribution_controller(users.find_value('user_id', user_id)['mode'], input, user_id, request)
                         write(user_id, output)
                     except:
                         pass
