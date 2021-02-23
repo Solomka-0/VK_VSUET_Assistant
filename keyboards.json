@@ -24,7 +24,144 @@
                 "type":"text",
                 "label":"Изменить режим работы помощника"
              },
-             "color":"positive"
+             "color":"primary"
+          }
+        ]
+     ]
+  },
+  "settings_step_0":
+  {
+     "one_time":false,
+     "buttons":[
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Факультет УИТС"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Факультет ПМА"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Факультет ЭХТ"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Технологический факультет"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Факультет ЭиУ"
+             },
+             "color":"primary"
+          }
+        ]
+     ]
+  },
+  "timetable":
+  {
+     "one_time":false,
+     "buttons":[
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Изменить режим работы помощника"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Смена персональной информации"
+             },
+             "color":"primary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Понедельник"
+             },
+             "color":"secondary"
+          },
+          {
+             "action":{
+                "type":"text",
+                "label":"Вторник"
+             },
+             "color":"secondary"
+          },
+          {
+             "action":{
+                "type":"text",
+                "label":"Среда"
+             },
+             "color":"secondary"
+          }
+        ],
+        [
+          {
+             "action":{
+                "type":"text",
+                "label":"Четверг"
+             },
+             "color":"secondary"
+          },
+          {
+             "action":{
+                "type":"text",
+                "label":"Пятница"
+             },
+             "color":"secondary"
+          },
+          {
+             "action":{
+                "type":"text",
+                "label":"Суббота"
+             },
+             "color":"secondary"
+          }
+        ],
+        [
+          {
+            "action":{
+              "type":"text",
+              "label":"Расписание этой недели"
+            },
+            "color":"secondary"
+          },
+          {
+            "action":{
+              "type":"text",
+              "label":"Расписание следующей недели"
+            },
+            "color":"secondary"
           }
         ]
      ]
@@ -39,7 +176,7 @@
                 "type":"text",
                 "label":"Изменить режим работы помощника"
              },
-             "color":"positive"
+             "color":"primary"
           }
         ],
         [
@@ -48,7 +185,7 @@
                 "type":"text",
                 "label":"Переключить отображение каталогов"
              },
-             "color":"positive"
+             "color":"primary"
           }
         ]
      ]
@@ -57,47 +194,48 @@
   {
      "one_time":true,
      "buttons":[
-        [
-          {
-             "action":{
-                "type":"text",
-                "label":"Общие вопросы"
-             },
-             "color":"positive"
-          }
-        ],
-        [
-          {
-             "action":{
-                "type":"text",
-                "label":"Абитуриенту"
-             },
-             "color":"positive"
-          }
-        ],
-        [
-          {
-             "action":{
-                "type":"text",
-                "label":"По вопросам маркетинга"
-             },
-             "color":"secondary"
-          }
-        ]
-     ]
+       [
+         {
+            "action":{
+               "type":"text",
+               "label":"Мое расписание"
+            },
+            "color":"primary"
+         }
+       ],
+       [
+         {
+            "action":{
+               "type":"text",
+               "label":"Общие вопросы"
+            },
+            "color":"primary"
+         }
+       ],
+      [
+        {
+           "action":{
+              "type":"text",
+              "label":"Абитуриенту"
+           },
+           "color":"primary"
+        }
+      ],
+      [
+        {
+           "action":{
+              "type":"text",
+              "label":"По вопросам маркетинга"
+           },
+           "color":"secondary"
+        }
+      ]
+   ]
   },
   "hide":
   {
     "one_time":true,
-    "buttons":[[
-      {
-         "action":{
-            "type":"text",
-            "label":"Меню"
-         },
-         "color":"secondary"
-      }
-    ]]
+    "buttons":[]
   }
 
 }
