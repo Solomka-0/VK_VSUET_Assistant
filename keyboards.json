@@ -232,6 +232,57 @@
       ]
    ]
   },
+  "adm_modes":
+  {
+     "one_time":false,
+     "buttons":[
+       [
+         {
+            "action":{
+               "type":"text",
+               "label":"[Admin] Обновить расписание"
+            },
+            "color":"positive"
+         }
+       ],
+       [
+         {
+            "action":{
+               "type":"text",
+               "label":"Мое расписание"
+            },
+            "color":"primary"
+         }
+       ],
+       [
+         {
+            "action":{
+               "type":"text",
+               "label":"Общие вопросы"
+            },
+            "color":"primary"
+         }
+       ],
+      [
+        {
+           "action":{
+              "type":"text",
+              "label":"Абитуриенту"
+           },
+           "color":"primary"
+        }
+      ],
+      [
+        {
+           "action":{
+              "type":"text",
+              "label":"По вопросам маркетинга"
+           },
+           "color":"secondary"
+        }
+      ]
+   ]
+  },
   "hide":
   {
     "one_time":true,

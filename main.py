@@ -12,8 +12,9 @@ from speech_controller import greeting_message, introductory_student, introducto
 from speech_controller import find_answer
 import data
 import json
-import timetable_controller
+from get import get as update_timetables
 from timetable_controller import timetable_controller as t_controller
+from timetable_controller import initialization
 
 class Storage(object): # Класс отвечает за сохранение листа в текстовом файле, его чтение и редактирование
     def __init__(self, filename):
@@ -104,6 +105,7 @@ def find_keyboard(name): # Ищет и возвращает клавиатуру
 
 def update_keyboard(user_id, keyboard, message = 'Клавиатура обновлена'): # Обновляет клавиатуру на заданную
     try:
+        print('\033[0m\033[37m ↑ Answer ↑\n\033[4m\033[36muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[36mmessage:\033[0m\033[33m', message, '\033[0m\033[37m')
         vk.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': id_generator(), 'keyboard': find_keyboard(keyboard)})
     except:
         print("Ошибка при попытке обновления клавиатуры! (см. update_keyboard)")
@@ -112,6 +114,7 @@ def send(user_id, message = None, file = None): # Отправляет сооб�
     attachments = []
     print('\033[0m\033[37m ↑ Answer ↑\n\033[4m\033[36muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[36mmessage:\033[0m\033[33m', message, '\n\033[4m\033[36mtype_of_file:\033[0m\033[33m', type(file), '\033[0m\033[37m')
     if message != None:
+        message_output(message)
         vk.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': id_generator()})
     elif file != None:
         if isinstance(file, data.Media): # Кидает картинку на сервер, а затем пересылает ее пользователю вместе с текстом сообщения
@@ -137,7 +140,7 @@ def proc_str(user_id, string): # Смотрит на то как вывести 
         try:
             generate_keyboard(user_id, string)
         except:
-            print('Не удалось создать клавиатуру!')
+            print('Возможно произошла ошибка (proc_str)')
     else:
         send(user_id, string)
 
@@ -154,7 +157,7 @@ def write(user_id, output): # "Распределяет" вывод
                 elif isinstance(output, dict):
                     write(user_id, element)
                 else:
-                    send(user_id, file = element)
+                    send(user_id, file=element)
         except:
             print('Ошибка при обработке массива (функция write)')
     elif isinstance(output, dict): # Выполняет действия, если вывод является словарем (dict)
@@ -202,6 +205,16 @@ def get_timetable(user_id, time):
 
 def command_block(user_id, words): # Обрабатывает команды
     global current_users
+
+    if admins.find_value('user_id', user_id):
+        if '/update_timetables' in words or ('обновить' in words and 'расписание' in words):
+            if update_timetables():
+                initialization()
+                send(user_id, 'Файлы успешно обновлены!')
+            else:
+                initialization()
+                send(user_id, 'Не удалось обновить файлы :с')
+
     if '/entrant_mode' in words or 'абитуриенту' in words: # Переключает режим на "для абитуриента"
         update_keyboard(user_id, 'entrant', introductory_entrant)
         switch_mode(user_id, mode = 'entrant')
@@ -247,8 +260,12 @@ def command_block(user_id, words): # Обрабатывает команды
         elif 'расписание' in words and 'недели' in words:
             get_timetable(user_id, 'неделя')
 
+
     if '/modes' in words or ('изменить' in words and 'режим' in words and 'работы' in words): # Возвращает клавиатуру для смены режима
-        update_keyboard(user_id, 'modes')
+        if admins.find_value('user_id', user_id):
+            update_keyboard(user_id, 'adm_modes')
+        else:
+            update_keyboard(user_id, 'modes')
         return True
     return False
 
@@ -361,7 +378,7 @@ def tt_settings(user_id, words, users): # Выбирает данные о по�
         users.saving()
         update_keyboard(user_id, 'switch_mode', 'Отлично! Теперь укажи свою группу, например: "У-206"')
         current_users[user_id] = 'step_1'
-        return 'Клавиатура была обновлена.'
+        return None
     elif current_users[user_id] == 'step_1': # Шаг 2 - Получение группы студента
         users.find_value('user_id', user_id)['group'] = words[0]
         users.saving()
@@ -374,7 +391,7 @@ def tt_settings(user_id, words, users): # Выбирает данные о по�
             current_users.pop(user_id)
             update_keyboard(user_id, 'timetable', 'Все, настройки завершены. Пользуйся на здоровье 😉')
             switch_mode(user_id, 'timetable')
-            return 'Клавиатура обновлена.'
+            return None
         else:
             return 'Такой подгруппы не может быть! Ты снова что-то напутал, человечишка'
 
