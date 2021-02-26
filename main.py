@@ -114,7 +114,6 @@ def send(user_id, message = None, file = None): # Отправляет сооб�
     attachments = []
     print('\033[0m\033[37m ↑ Answer ↑\n\033[4m\033[36muser_id:\033[0m\033[33m', user_id, '\n\033[4m\033[36mmessage:\033[0m\033[33m', message, '\n\033[4m\033[36mtype_of_file:\033[0m\033[33m', type(file), '\033[0m\033[37m')
     if message != None:
-        message_output(message)
         vk.method('messages.send', {'user_id': user_id, 'message': message, 'random_id': id_generator()})
     elif file != None:
         if isinstance(file, data.Media): # Кидает картинку на сервер, а затем пересылает ее пользователю вместе с текстом сообщения
