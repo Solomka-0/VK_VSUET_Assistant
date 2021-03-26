@@ -6,11 +6,14 @@ from openpyxl.utils import range_boundaries
 from openpyxl.workbook import Workbook
 from get import file_names
 
-def get_week_type():
-    if datetime.datetime.now().month % 2 == 0:
-        return False
-    else:
+def get_week_type(): # Возвращает тип недели. True - числитель, False - знаменатель
+    d = datetime.datetime.now()
+    if (d.toordinal() + 4)/7 % 2 != 0:
+        print(d.toordinal() + 4/2)
         return True
+    else:
+        print(d.toordinal() + 4/2)
+        return False
 
 def letter(string):
     string = string.replace('26', 'Z')

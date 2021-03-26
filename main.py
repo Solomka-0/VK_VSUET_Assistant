@@ -15,6 +15,7 @@ import json
 from get import get as update_timetables
 from timetable_controller import timetable_controller as t_controller
 from timetable_controller import initialization
+from ipgetter2 import ipgetter1 as ipgetter
 
 class Storage(object): # Класс отвечает за сохранение листа в текстовом файле, его чтение и редактирование
     def __init__(self, filename):
@@ -47,14 +48,11 @@ def id_generator():
     id = int(id)
     return id
 
-def get_week_type(): # Возвращает тип недели. True - числитель, False - знаменатель
-    if datetime.datetime.now().month % 2 == 0:
-        return False
-    else:
-        return True
-
 def get_group_id(): # Возвращает id сообщества
     return vk.method('groups.getById',{})[0]['id']
+
+def get_ip():
+    return ipgetter.myip()
 
 def find_admins(): # Находит администраторов, возвращает список из id пользователей
     array = []
@@ -213,6 +211,8 @@ def command_block(user_id, words): # Обрабатывает команды
             else:
                 initialization()
                 send(user_id, 'Не удалось обновить файлы :с')
+        if '/get_ip' in words or ('ip' in words):
+            send(user_id, get_ip())
 
     if '/entrant_mode' in words or 'абитуриенту' in words: # Переключает режим на "для абитуриента"
         update_keyboard(user_id, 'entrant', introductory_entrant)

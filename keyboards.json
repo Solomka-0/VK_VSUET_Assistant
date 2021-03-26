@@ -240,6 +240,15 @@
          {
             "action":{
                "type":"text",
+               "label":"[Admin] Узнать внешний IP"
+            },
+            "color":"positive"
+         }
+       ],
+       [
+         {
+            "action":{
+               "type":"text",
                "label":"[Admin] Обновить расписание"
             },
             "color":"positive"
