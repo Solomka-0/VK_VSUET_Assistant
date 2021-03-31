@@ -236,7 +236,7 @@ def command_block(user_id, words): # Обрабатывает команды
         write(user_id, 'Режим работы с клавиатурой изменен')
         return True
     elif '/tt_settings' in words or ('смена' in words and 'информации' in words): # Меняет режим для получения информации о пользователе
-        update_keyboard(user_id, 'settings_step_0', 'Для начала следует определится с факультетом. Выберите один из вариантов на клавиатуре')
+        update_keyboard(user_id, 'settings_step_0', 'Для начала следует определится с факультетом. Выбери один из вариантов на клавиатуре')
         switch_mode(user_id, 'tt_settings')
         current_users[user_id] = 'step_0'
         return True
@@ -260,7 +260,7 @@ def command_block(user_id, words): # Обрабатывает команды
             get_timetable(user_id, 'неделя')
 
 
-    if '/modes' in words or ('изменить' in words and 'режим' in words and 'работы' in words): # Возвращает клавиатуру для смены режима
+    if '/modes' in words or ('вернуться' in words and 'к' in words and 'меню' in words) or ('Изменить' in words and 'режим' in words and 'работы' in words): # Возвращает клавиатуру для смены режима
         if admins.find_value('user_id', user_id):
             update_keyboard(user_id, 'adm_modes')
         else:

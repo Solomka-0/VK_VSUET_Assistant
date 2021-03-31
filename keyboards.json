@@ -22,7 +22,7 @@
           {
              "action":{
                 "type":"text",
-                "label":"Изменить режим работы помощника"
+                "label":"Вернуться к главному меню"
              },
              "color":"primary"
           }
@@ -88,7 +88,7 @@
           {
              "action":{
                 "type":"text",
-                "label":"Изменить режим работы помощника"
+                "label":"Вернуться к главному меню"
              },
              "color":"primary"
           }
@@ -174,7 +174,7 @@
           {
              "action":{
                 "type":"text",
-                "label":"Изменить режим работы помощника"
+                "label":"Вернуться к главному меню"
              },
              "color":"primary"
           }
@@ -227,7 +227,7 @@
               "type":"text",
               "label":"По вопросам маркетинга"
            },
-           "color":"secondary"
+           "color":"primary"
         }
       ]
    ]
@@ -287,7 +287,7 @@
               "type":"text",
               "label":"По вопросам маркетинга"
            },
-           "color":"secondary"
+           "color":"primary"
         }
       ]
    ]

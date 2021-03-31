@@ -37,4 +37,5 @@ def get():
             file.close()
         return False
 
-get()
+if input("Загрузить расписание? (y/n): ") == 'y':
+    get()

@@ -5,14 +5,14 @@ import rewriter
 from openpyxl.utils import range_boundaries
 from openpyxl.workbook import Workbook
 from get import file_names
+from dateutil import relativedelta
 
-def get_week_type(): # Возвращает тип недели. True - числитель, False - знаменатель
-    d = datetime.datetime.now()
-    if (d.toordinal() + 4)/7 % 2 != 0:
-        print(d.toordinal() + 4/2)
+def get_week_type(day): # Возвращает тип недели. True - числитель, False - знаменатель
+    date = datetime.datetime.now()
+    date = date + relativedelta.relativedelta(weekday=day)
+    if date.isocalendar()[1] % 2 != 0:
         return True
     else:
-        print(d.toordinal() + 4/2)
         return False
 
 def letter(string):
@@ -53,16 +53,6 @@ def number_to_letters(number):
         number = number // base
     return newNum
 
-def replace_time(string):
-    string = string.replace('08.00-09.35', '1 пара')
-    string = string.replace('09.45-11.20', '2 пара')
-    string = string.replace('11.50-13.25', '3 пара')
-    string = string.replace('13.35-15.10', '4 пара')
-    string = string.replace('15.20-16.55', '5 пара')
-    string = string.replace('17.05-18.40', '6 пара')
-    string = string.replace('18.50-20.25', '7 пара')
-    return string
-
 def week_number_to_str(number):
     days_of_week = {0:'понедельник', 1:'вторник', 2:'среда', 3:'четверг', 4:'пятница', 5:'суббота', 6:'восскресение'}
     try:
@@ -78,10 +68,19 @@ def week_str_to_number(string):
         return False
 
 def week_type_to_str(bool):
-    if bool:
-        return 'числитель'
+    date = datetime.datetime.now().weekday()
+    string = ''
+    if bool != get_week_type(date):
+        string += 'следующей недели'
     else:
-        return 'знаменатель'
+        string += 'текущей недели'
+
+    if bool:
+        string += ' [числитель]'
+    else:
+        string += ' [знаменатель]'
+
+    return string
 
 def format_sheet(sheet):
     counter = 0
@@ -103,7 +102,7 @@ def delete_spaces(string):
 
 def find_timetable(week_number, week_type, cells, coordinates, subgroup):
     output = ''
-    title = f'{week_number_to_str(week_number).capitalize()} ({week_type_to_str(week_type)})\n'
+    title = f'{week_number_to_str(week_number).capitalize()} {week_type_to_str(week_type)}\n'
     if len(coordinates) == 2:
         for p in range(1, 8):
             if cells[ p * 2 - int(week_type) + week_number * 14 ][ coordinates[1][1] ].value != '' and cells[ p * 2 - int(week_type) + week_number * 14 ][ coordinates[1][1] ].value != None and subgroup == 2:
@@ -149,7 +148,7 @@ def initialization():
 
 def timetable_controller(group, subgroup, time, faculty):
     global file_names
-    week_type = get_week_type()
+    week_type = get_week_type(week_str_to_number(time))
     book_name = file_names[faculty]
     book = openpyxl.load_workbook(book_name)
     coordinates = []

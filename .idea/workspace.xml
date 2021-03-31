@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="20bea2bf-4f37-407c-b35b-f6e7e4b107bc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timetables/eht.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/timetables/eht.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timetables/eui.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/timetables/eui.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timetables/pma.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/timetables/pma.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timetables/tf.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/timetables/tf.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/timetables/uits.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/timetables/uits.xlsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1phqNbHzchhF0TiJjwP30RLkUbD" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="20bea2bf-4f37-407c-b35b-f6e7e4b107bc" name="Default Changelist" comment="" />
+      <created>1615645647234</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615645647234</updated>
+    </task>
+    <servers />
+  </component>
+</project>
