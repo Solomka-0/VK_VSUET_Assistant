@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-file_names = {'uits':'timetables/uits.xlsx', 'pma':'timetables/pma.xlsx', 'eht':'timetables/eht.xlsx', 'tf':'timetables/tf.xlsx', 'eiu':'timetables/eui.xlsx'}
+file_names = {'uits':'timetables/uits.xlsx', 'pma':'timetables/pma.xlsx', 'eht':'timetables/eht.xlsx', 'tf':'timetables/tf.xlsx', 'eiu':'timetables/eiu.xlsx'}
 
 def get():
     url_name = 'https://vsuet.ru'
@@ -13,9 +13,8 @@ def get():
 
         references = []
         for ul in uls:
-            if 'i-file' in ul['class']:
-                if ul.a['href'].find('.xlsx') != -1:
-                    references.append(ul.a['href'])
+            if ul.a['href'].find('.xlsx') != -1:
+                references.append(ul.a['href'])
 
         for i in range(0, len(references)):
             references[i] = url_name + references[i]

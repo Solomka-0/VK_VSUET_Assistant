@@ -132,23 +132,25 @@ def send(user_id, message = None, file = None): # Отправляет сооб�
         elif isinstance(file, data.Folder) and file.text != None:
             vk.method('messages.send', {'user_id': user_id, 'message': file.text, 'random_id': id_generator()})
 
-def proc_str(user_id, string): # Смотрит на то как вывести строку (в виде кнопок, или же без них)
-    if users.find_value('user_id', user_id)['keyboard_mode'] and users.find_value('user_id', user_id)['mode'] == 'entrant':
+def proc_str(user_id, string, out): # Смотрит на то как вывести строку (в виде кнопок, или же без них)
+    if out == True:
+        send(user_id, string)
+    elif users.find_value('user_id', user_id)['keyboard_mode'] and users.find_value('user_id', user_id)['mode'] == 'entrant':
         try:
             generate_keyboard(user_id, string)
         except:
-            print('Возможно произошла ошибка (proc_str)')
+            print('Клавиатура не была сгенерирована (proc_str)')
     else:
         send(user_id, string)
 
-def write(user_id, output): # "Распределяет" вывод
+def write(user_id, output, out = False): # "Распределяет" вывод
     if isinstance(output, str): # Выполняет действия, предназначенные для строки
-        proc_str(user_id, output)
+        proc_str(user_id, output, out)
     elif isinstance(output, list): # Выполняет действия с массивом (list)
         try:
             for element in output: # Отправляет все сообщения или файлы (если их несколько) пользователю
                 if isinstance(element, str):
-                    proc_str(user_id, element)
+                    proc_str(user_id, element, out)
                 elif isinstance(element, list):
                     write(user_id, element)
                 elif isinstance(output, dict):
@@ -161,7 +163,7 @@ def write(user_id, output): # "Распределяет" вывод
         ids = []
         ids = controller.dict_to_list(output).copy()
         for element in ids:
-            write(element, output[element])
+            write(element, output[element], True)
     elif isinstance(output, None):
         print("*Молчит*")
     else:
@@ -171,15 +173,15 @@ def write(user_id, output): # "Распределяет" вывод
 def switch_mode(user_id, mode = None): # Переключает режим работы
     users.find_value('user_id', user_id)['mode'] = mode
     if mode == 'entrant':
-        write(user_id, ['Включен режим для абитуриента!', controller.main(user_id)])
+        write(user_id, [data.sw_notification_1, controller.main(user_id)])
     elif mode == 'student':
-        write(user_id, 'Ну, где там твой вопрос? 🧐')
+        write(user_id, data.sw_notification_2)
     elif mode == 'ad':
-        write(user_id, 'Мы ждем :)')
+        write(user_id, data.sw_notification_3)
     elif mode == 'timetable':
-        write(user_id, 'Жми на кнопку! c:')
+        write(user_id, data.sw_notification_4)
     elif mode == 'tt_settings':
-        write(user_id, 'Ты от куда?')
+        write(user_id, data.sw_notification_5)
     users.saving()
 
 output = [] # Переменная для вывода
@@ -196,7 +198,7 @@ def get_timetable(user_id, time):
             ))
     except:
         if users.find_value('user_id', user_id)['group'] == None or users.find_value('user_id', user_id)['faculty'] == None:
-            update_keyboard(user_id, 'timetable', 'Недостаточно данных для получения рассписания. Ты можешь добавить информацию о себе, воспользовавшись особым разделом ("Смена персональной информации")')
+            update_keyboard(user_id, 'timetable', data.alert_get)
         else:
             send(user_id, f'Не удалось получить расписание по заданным фильтрам:\nГруппа {users.find_value("user_id", user_id)["group"]}\nВременной промежуток {time}\nФакультет "{users.find_value("user_id", user_id)["faculty"]}"')
 
@@ -236,10 +238,12 @@ def command_block(user_id, words): # Обрабатывает команды
         write(user_id, 'Режим работы с клавиатурой изменен')
         return True
     elif '/tt_settings' in words or ('смена' in words and 'информации' in words): # Меняет режим для получения информации о пользователе
-        update_keyboard(user_id, 'settings_step_0', 'Для начала следует определится с факультетом. Выбери один из вариантов на клавиатуре')
+        update_keyboard(user_id, 'settings_step_0', data.settings_step_0)
         switch_mode(user_id, 'tt_settings')
         current_users[user_id] = 'step_0'
         return True
+    elif 'cat' in words or 'кот' in words or 'котик' in words or 'kitten' in words or 'котенок' in words:
+        send(user_id, file = data.cats[random.randint(0, len(data.cats)-1)])
 
     if users.find_value('user_id', user_id)['mode'] == 'timetable': # Возвращает расписание пользователю, исходя из указанного времени
         if 'понедельник' in words:
@@ -263,8 +267,10 @@ def command_block(user_id, words): # Обрабатывает команды
     if '/modes' in words or ('вернуться' in words and 'к' in words and 'меню' in words) or ('Изменить' in words and 'режим' in words and 'работы' in words): # Возвращает клавиатуру для смены режима
         if admins.find_value('user_id', user_id):
             update_keyboard(user_id, 'adm_modes')
+            switch_mode(user_id, mode = 'student')
         else:
             update_keyboard(user_id, 'modes')
+            switch_mode(user_id, mode = 'student')
         return True
     return False
 
@@ -368,31 +374,34 @@ def tt_settings(user_id, words, users): # Выбирает данные о по�
             users.find_value('user_id', user_id)['faculty'] = 'pma'
         elif 'эхт' in words:
             users.find_value('user_id', user_id)['faculty'] = 'eht'
-        elif 'технологий' in words and 'факультет' in words:
+        elif 'технологический' in words and 'факультет' in words:
             users.find_value('user_id', user_id)['faculty'] = 'tf'
         elif 'эиу' in words or ('экономики' in words and 'управления' in words):
-            users.find_value('user_id', user_id)['faculty'] = 'eui'
+            users.find_value('user_id', user_id)['faculty'] = 'eiu'
         else:
-            return 'Увы, такого факультета нет в моем списке. Пожалуйста, используй кнопки'
+            return data.alert_faculty
         users.saving()
-        update_keyboard(user_id, 'switch_mode', 'Отлично! Теперь укажи свою группу, например: "У-206"')
+        update_keyboard(user_id, 'switch_mode', data.settings_step_1)
         current_users[user_id] = 'step_1'
         return None
     elif current_users[user_id] == 'step_1': # Шаг 2 - Получение группы студента
-        users.find_value('user_id', user_id)['group'] = words[0]
+        if len(words) == 2:
+            users.find_value('user_id', user_id)['group'] = words[0] + '-' + words[1]
+        else:
+            users.find_value('user_id', user_id)['group'] = words[0]
         users.saving()
         current_users[user_id] = 'step_2'
-        return 'Параметр был сохранен. Осталось только узнать твою подгруппу. Укажи "1"/"2" или, если у вас нет разделения, выбери любую из цифр'
+        return data.settings_step_2
     elif current_users[user_id] == 'step_2':  # Шаг 3 - Получение подгруппы и смена режима
         if int(words[0]) == 1 or int(words[0]) == 2:
             users.find_value('user_id', user_id)['subgroup'] = int(words[0])
             users.saving()
             current_users.pop(user_id)
-            update_keyboard(user_id, 'timetable', 'Все, настройки завершены. Пользуйся на здоровье 😉')
+            update_keyboard(user_id, 'timetable', data.settings_final)
             switch_mode(user_id, 'timetable')
             return None
         else:
-            return 'Такой подгруппы не может быть! Ты снова что-то напутал, человечишка'
+            return data.alert_group
 
 
 # Основная программа
